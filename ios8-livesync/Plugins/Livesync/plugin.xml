@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	id="com.telerik.LiveSync"
+	version="0.0.1">
+
+	<name>LiveSync</name>
+
+	<description>Performs LiveSync.</description>
+
+	<preference name="LiveSyncToken"/>
+	<preference name="Host"/>
+
+	<engines>
+		<engine name="cordova" version=">=3.0.0" />
+	</engines>
+
+	<platform name="ios">
+		<resource-file src="src/ios/ServerInfo.plist" />
+
+		<config-file target="*ServerInfo.plist" parent="Host">
+			<string>$HOST</string>
+		</config-file>
+		<config-file target="*ServerInfo.plist" parent="LiveSyncToken">
+			<string>$LIVESYNCTOKEN</string>
+		</config-file>
+
+		<source-file src="src/ios/libLiveSync.a" framework="true"/>
+
+		<framework src="libstdc++.dylib" />
+		<framework src="libz.dylib" />
+		<framework src="CFNetwork.framework" />
+		<framework src="SystemConfiguration.framework" />
+		<framework src="AudioToolbox.framework" />
+	</platform>
+
+	<!-- android -->
+	<platform name="android">
+		<config-file target="res/xml/config.xml" parent="/*">
+			<feature name="LiveSync" >
+				<param name="android-package" value="com.telerik.LiveSync.LiveSyncPlugin"/>
+				<param name="onload" value="true" />
+			</feature>
+		</config-file>
+
+		<config-file target="res/values/strings.xml" parent="/*">
+			<string name="LiveSyncToken">$LIVESYNCTOKEN</string>
+			<string name="Host">$HOST</string>
+		</config-file>
+
+		<config-file target="AndroidManifest.xml" parent="/*">
+			<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+			<uses-permission android:name="android.permission.VIBRATE" />
+			<uses-permission android:name="android.permission.INTERNET" />
+			<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+		</config-file>
+
+		<config-file target="AndroidManifest.xml" parent="/manifest/application">
+			<receiver android:name="com.telerik.LiveSync.IsLiveSyncSupportedReceiver">
+				<intent-filter>
+					<action android:name="com.telerik.IsLiveSyncSupported" />
+				</intent-filter>
+			</receiver>
+		</config-file>
+		<config-file target="AndroidManifest.xml" parent="/manifest/application">
+			<receiver android:name="com.telerik.LiveSync.LiveSyncBroadcastReceiver">
+				<intent-filter>
+					<action android:name="com.telerik.LiveSync" />
+				</intent-filter>
+			</receiver>
+		</config-file>
+		<config-file target="res/values/strings.xml" parent="/*">
+			<string name="Telerik_LiveSync_CustomUrlSchemePrefix">icenium:</string>
+		</config-file>
+
+		<source-file src="src/android/LiveSync-Plugin/src/com/telerik/LiveSync/LiveSyncPlugin.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Plugin/src/com/telerik/LiveSync/LiveSync.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/AppBuilderBroadcastReceiverBase.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/Bootstrapper.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/CloudSync.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/DirectoryWalker.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/FileUtil.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/IsLiveSyncSupportedReceiver.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/LiveSyncBroadcastReceiver.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/LiveSyncCommands.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/LiveSyncController.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/LiveSyncFeedback.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/LiveSyncTouchListener.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/PersistenceSettings.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/ResourceLocator.java" target-dir="src/com/telerik/LiveSync" />
+		<source-file src="src/android/LiveSync-Lib/android/LiveSync-Lib/src/com/telerik/LiveSync/UrlUtil.java" target-dir="src/com/telerik/LiveSync" />
+	</platform>
+
+	<!-- wp8 -->
+	<platform name="wp8">
+		<config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App/Capabilities">
+			<Capability Name="ID_CAP_NETWORKING" />
+		</config-file>
+
+		<config-file target="config.xml" parent="/*">
+			<preference name="LiveSyncToken" value="$LIVESYNCTOKEN"/>
+			<preference name="Host" value="$HOST"/>
+		</config-file>
+
+		<source-file src="src/wp8/CordovaView.LiveSync.cs" />
+		<source-file src="src/wp8/IsolatedStorageHelper.cs" />
+		<source-file src="src/wp8/LiveSyncPlugin.cs" />
+		<source-file src="src/wp8/ServerInfo.cs" />
+		<source-file src="src/wp8/ProgressDialog.xaml" />
+		<source-file src="src/wp8/ProgressDialog.xaml.cs" />
+		<framework src="src/wp8/Libraries/SharpCompress.dll" custom="true" />
+		<framework src="src/wp8/Libraries/CustomMessageBox.dll" custom="true" />
+	</platform>
+</plugin>
